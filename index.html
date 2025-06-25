@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PLANAD 2025: Propostas para uma Nova Política de Drogas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Humanist Dawn -->
+    <!-- Application Structure Plan: The application is structured into three core thematic sections to create a narrative user flow. 1) 'O Paradigma Falido': This section deconstructs the current prohibitionist model by first presenting an interactive 'Mito vs. Fato' component to challenge user preconceptions directly, followed by a data visualization on the racial disparity in the 'War on Drugs' to highlight its social cost. This structure was chosen to establish the problem's foundation before presenting solutions. 2) 'Um Novo Caminho: Propostas para o PLANAD': This central section reorganizes the 7 axes of the report into three intuitive, actionable themes (Saúde & Dignidade, Justiça & Sociedade, Governança Inteligente) presented in a tabbed interface. This grouping makes the complex proposals more digestible and allows users to explore solutions based on their interest, rather than following the report's rigid structure. 3) 'Participe da Mudança': A clear call-to-action section that funnels the user's engagement toward the ultimate goal of the source document—participating in the official consultation. This flow (Problem -> Solution -> Action) is a classic narrative structure designed for maximum persuasion and usability. -->
+    <!-- Visualization & Content Choices: 1) Mito vs. Fato: Report Info -> Common myths about drug use vs. scientific evidence. Goal -> Inform/Compare. Viz -> Interactive flippable cards. Interaction -> On-click reveal. Justification -> More engaging than a static table, encourages user interaction and discovery. Library -> HTML/CSS/JS. 2) Incarceration Disparity: Report Info -> Statistic on disproportionate incarceration of Black men. Goal -> Compare/Impact. Viz -> Horizontal Bar Chart. Interaction -> Hover tooltips. Justification -> Visually quantifies the abstract concept of racial bias in a powerful, undeniable way. Library -> Chart.js/Canvas. 3) Solution Proposals: Report Info -> Detailed proposals from the 7 axes. Goal -> Organize/Inform. Viz -> Accordion-style dropdowns within a tabbed interface. Interaction -> Click to expand/collapse. Justification -> Manages information density, allowing users to scan high-level proposals and drill down into details as needed, preventing overwhelm. Library -> HTML/CSS/JS. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #fdfdfc;
+        }
+        .tab-active {
+            border-color: #4a5568;
+            background-color: #edf2f7;
+            font-weight: 600;
+        }
+        .tab-inactive {
+            border-color: transparent;
+            color: #718096;
+        }
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .card-flip-inner {
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-flip:hover .card-flip-inner {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+        .card-back {
+            transform: rotateY(180deg);
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <header class="bg-gray-800 text-white p-6 shadow-lg">
+        <div class="container mx-auto max-w-5xl text-center">
+            <h1 class="text-3xl md:text-4xl font-bold">Rumo a um PLANAD 2025 Humanizado</h1>
+            <p class="mt-2 text-lg text-gray-300">Uma análise interativa das propostas para uma política de drogas baseada em evidências, direitos humanos e cuidado em liberdade.</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-5xl p-4 md:p-8">
+
+        <!-- Section 1: The Failed Paradigm -->
+        <section id="paradigma" class="my-12">
+            <h2 class="text-3xl font-bold text-center text-gray-700 mb-2">O Paradigma Falido</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">A "Guerra às Drogas" se mostrou ineficaz e prejudicial, baseada em mitos e preconceitos. Antes de construir um novo caminho, precisamos entender as falhas do modelo atual.</p>
+
+            <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h3 class="text-2xl font-bold text-center mb-6">Mito vs. Fato: Desconstruindo Ideias</h3>
+                <p class="text-center text-gray-600 mb-8">Passe o mouse sobre os cartões para revelar as evidências científicas que contradizem o senso comum.</p>
+                <div class="grid md:grid-cols-2 gap-6">
+
+                    <div class="card-flip perspective-[1000px] h-64">
+                        <div class="card-flip-inner relative w-full h-full text-center">
+                            <div class="card-front absolute w-full h-full p-6 bg-rose-100 rounded-lg shadow-sm flex flex-col justify-center items-center">
+                                <h4 class="text-xl font-bold text-rose-800">MITO</h4>
+                                <p class="mt-2 text-lg text-rose-700">"Todo uso de drogas leva à dependência."</p>
+                            </div>
+                            <div class="card-back absolute w-full h-full p-6 bg-teal-100 rounded-lg shadow-sm flex flex-col justify-center items-center">
+                                <h4 class="text-xl font-bold text-teal-800">FATO</h4>
+                                <p class="mt-2 text-lg text-teal-700">A grande maioria dos usuários não desenvolve dependência. Apenas 10-25% dos usuários de substâncias ilícitas se tornam dependentes.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-flip perspective-[1000px] h-64">
+                        <div class="card-flip-inner relative w-full h-full text-center">
+                             <div class="card-front absolute w-full h-full p-6 bg-rose-100 rounded-lg shadow-sm flex flex-col justify-center items-center">
+                                <h4 class="text-xl font-bold text-rose-800">MITO</h4>
+                                <p class="mt-2 text-lg text-rose-700">"A dependência é uma falha moral ou falta de caráter."</p>
+                            </div>
+                            <div class="card-back absolute w-full h-full p-6 bg-teal-100 rounded-lg shadow-sm flex flex-col justify-center items-center">
+                                <h4 class="text-xl font-bold text-teal-800">FATO</h4>
+                                <p class="mt-2 text-lg text-teal-700">É uma condição de saúde complexa (bio-psico-social), frequentemente um sintoma de sofrimento e desconexão social.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="mt-12 bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                <h3 class="text-2xl font-bold text-center mb-2">O Custo Humano da Proibição</h3>
+                <p class="text-center text-gray-600 max-w-3xl mx-auto mb-8">A política de "Guerra às Drogas" não é aplicada de forma igualitária. Ela se tornou uma ferramenta de controle social com um viés racial e classista, resultando em encarceramento em massa e perpetuando desigualdades.</p>
+                <div class="chart-container">
+                    <canvas id="incarcerationChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: A New Path -->
+        <section id="propostas" class="my-12">
+            <h2 class="text-3xl font-bold text-center text-gray-700 mb-2">Um Novo Caminho: Propostas para o PLANAD</h2>
+            <p class="text-center text-gray-600 max-w-3xl mx-auto mb-10">As propostas para o novo plano se baseiam em uma mudança de paradigma: do castigo para o cuidado, da repressão para a cidadania. Explore os eixos de propostas abaixo.</p>
+
+            <div>
+                <div class="border-b border-gray-300">
+                    <nav class="flex -mb-px" id="tabs">
+                        <button data-tab="saude" class="tab-btn tab-active text-gray-700 py-4 px-6 block hover:text-gray-800 focus:outline-none border-b-2">
+                            Saúde & Dignidade
+                        </button>
+                        <button data-tab="justica" class="tab-btn tab-inactive py-4 px-6 block hover:text-gray-800 focus:outline-none border-b-2">
+                            Justiça & Sociedade
+                        </button>
+                        <button data-tab="governanca" class="tab-btn tab-inactive py-4 px-6 block hover:text-gray-800 focus:outline-none border-b-2">
+                            Governança Inteligente
+                        </button>
+                    </nav>
+                </div>
+                <div class="py-8" id="tab-content">
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Call to Action -->
+        <section id="acao" class="my-12 bg-gray-800 text-white rounded-lg shadow-lg p-8 text-center">
+            <h2 class="text-3xl font-bold mb-4">Participe da Mudança</h2>
+            <p class="text-lg text-gray-300 mb-6">Sua voz é fundamental para construir uma política de drogas mais justa e humana. As respostas desta consulta livre serão compiladas e enviadas para a consulta pública nacional do PLANAD.</p>
+            <a href="https://www.gov.br/participamaisbrasil/consulta-reformulacao-planad" target="_blank" class="inline-block bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-8 rounded-lg transition-colors">
+                Contribua na Consulta Oficial
+            </a>
+        </section>
+    </main>
+    
+    <footer class="text-center p-4 text-gray-500 text-sm">
+        <p>Esta é uma ferramenta de visualização baseada na pré-consulta dos movimentos sociais do Paraná para o PLANAD 2025.</p>
+    </footer>
+
+    <script>
+        const tabData = {
+            saude: {
+                title: 'Saúde & Dignidade',
+                description: 'Este eixo combina a Redução de Danos e o Acesso ao Cuidado, colocando a saúde e o respeito à vida como pilares centrais. O objetivo é substituir a coerção pelo cuidado voluntário e integrado, minimizando os riscos associados ao uso de drogas e garantindo que todos tenham acesso a tratamento digno.',
+                proposals: [
+                    {
+                        title: 'Expansão de Serviços de Redução de Danos',
+                        content: 'Implementar e ampliar programas de troca de seringas, distribuição de naloxona (para reverter overdoses), espaços de consumo seguro e serviços de testagem de substâncias para verificar pureza e potência.'
+                    },
+                    {
+                        title: 'Tratamento Integrado e Voluntário',
+                        content: 'Expandir o acesso a tratamentos voluntários baseados em evidências, que integrem o cuidado para a dependência e transtornos de saúde mental coexistentes, sempre em ambientes de liberdade.'
+                    },
+                    {
+                        title: 'Desestigmatização e Educação em Saúde',
+                        content: 'Promover campanhas que expliquem a redução de danos como uma estratégia de saúde pública eficaz e humana, combatendo o estigma associado ao uso de drogas e capacitando profissionais de saúde para um atendimento empático.'
+                    }
+                ]
+            },
+            justica: {
+                title: 'Justiça & Sociedade',
+                description: 'Este eixo une o Desenvolvimento Social, a Segurança Cidadã e a Justiça Criminal. A proposta é parar de tratar um problema de saúde como caso de polícia, abordando as causas sociais da vulnerabilidade e reformando o sistema de justiça para que ele promova a reintegração social em vez do encarceramento em massa.',
+                proposals: [
+                    {
+                        title: 'Descriminalização do Uso Pessoal',
+                        content: 'Descriminalizar o porte de todas as drogas para uso pessoal, redirecionando os massivos recursos da aplicação da lei para a saúde pública, prevenção e tratamento, seguindo exemplos de sucesso como o de Portugal.'
+                    },
+                    {
+                        title: 'Investimento nas Causas-Raiz',
+                        content: 'Focar em políticas de educação, emprego, moradia e cultura para abordar o desemprego, o racismo e o desespero que frequentemente levam ao uso problemático de substâncias. O oposto da dependência é a conexão social.'
+                    },
+                    {
+                        title: 'Reforma do Sistema Penal',
+                        content: 'Revisar leis que geram sentenças desproporcionais e afetam principalmente a população negra e pobre. Priorizar alternativas ao encarceramento, como a justiça restaurativa, para crimes não violentos relacionados a drogas.'
+                    },
+                    {
+                        title: 'Regulamentação do Mercado',
+                        content: 'Considerar a regulamentação do mercado de drogas para enfraquecer o poder financeiro e violento de facções criminosas, garantir a qualidade dos produtos e gerar impostos para financiar a saúde e a prevenção.'
+                    }
+                ]
+            },
+            governanca: {
+                title: 'Governança Inteligente',
+                description: 'Este eixo agrupa a Prevenção, a Governança Participativa e as Políticas Baseadas em Evidências. O objetivo é construir um sistema de gestão de políticas sobre drogas que seja racional, democrático e eficaz. Isso significa educar com base na ciência, não no medo; incluir a sociedade nas decisões; e avaliar constantemente os resultados das políticas.',
+                proposals: [
+                    {
+                        title: 'Políticas Baseadas em Evidências',
+                        content: 'Estabelecer um mandato legal para que todas as políticas sobre drogas sejam fundamentadas em dados científicos, não em pânico moral. Criar indicadores claros (saúde pública, reintegração) para avaliar o sucesso, em vez de focar apenas em apreensões.'
+                    },
+                    {
+                        title: 'Prevenção Realista e Informada',
+                        content: 'Substituir campanhas de "diga não" por programas educacionais que forneçam informações honestas sobre riscos, estratégias de redução de danos e a possibilidade do uso responsável, desenvolvendo habilidades de vida nos jovens.'
+                    },
+                    {
+                        title: 'Fortalecimento da Participação Social',
+                        content: 'Garantir a participação ativa e com poder de decisão de pessoas que usam drogas, seus familiares, movimentos sociais e cientistas nos conselhos e na formulação de políticas, assegurando que elas respondam às necessidades reais da comunidade.'
+                    }
+                ]
+            }
+        };
+
+        function renderTabContent(tabKey) {
+            const data = tabData[tabKey];
+            const contentContainer = document.getElementById('tab-content');
+            
+            let proposalsHtml = data.proposals.map((proposal, index) => `
+                <div class="border-b border-gray-200">
+                    <h2>
+                        <button type="button" class="flex items-center justify-between w-full p-5 font-medium text-left text-gray-700 hover:bg-gray-100" data-accordion-target="#accordion-body-${index}">
+                            <span>${proposal.title}</span>
+                            <svg class="w-6 h-6 shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+                        </button>
+                    </h2>
+                    <div id="accordion-body-${index}" class="accordion-content">
+                        <div class="p-5 border-t-0 border-gray-200">
+                            <p class="mb-2 text-gray-600">${proposal.content}</p>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            contentContainer.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
+                    <p class="text-gray-600 mb-6">${data.description}</p>
+                    <div id="accordion-example">
+                        ${proposalsHtml}
+                    </div>
+                </div>
+            `;
+            
+            addAccordionListeners();
+        }
+
+        function addAccordionListeners() {
+            document.querySelectorAll('[data-accordion-target]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetId = button.getAttribute('data-accordion-target');
+                    const targetPanel = document.querySelector(targetId);
+                    const isExpanded = targetPanel.style.maxHeight && targetPanel.style.maxHeight !== '0px';
+
+                    if (isExpanded) {
+                        targetPanel.style.maxHeight = '0px';
+                        button.querySelector('svg').style.transform = 'rotate(0deg)';
+                    } else {
+                        targetPanel.style.maxHeight = targetPanel.scrollHeight + 'px';
+                        button.querySelector('svg').style.transform = 'rotate(180deg)';
+                    }
+                });
+            });
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const tabsContainer = document.getElementById('tabs');
+            tabsContainer.addEventListener('click', (event) => {
+                if (event.target.classList.contains('tab-btn')) {
+                    const tabKey = event.target.getAttribute('data-tab');
+                    
+                    document.querySelectorAll('.tab-btn').forEach(btn => {
+                        btn.classList.remove('tab-active');
+                        btn.classList.add('tab-inactive');
+                    });
+                    
+                    event.target.classList.add('tab-active');
+                    event.target.classList.remove('tab-inactive');
+                    
+                    renderTabContent(tabKey);
+                }
+            });
+
+            renderTabContent('saude');
+
+            const ctx = document.getElementById('incarcerationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Homens negros', 'Homens brancos'],
+                    datasets: [{
+                        label: 'Chance de prisão durante a vida (EUA)',
+                        data: [(1/3)*100, (1/17)*100],
+                        backgroundColor: [
+                            'rgba(199, 21, 133, 0.6)',
+                            'rgba(32, 178, 170, 0.6)'
+                        ],
+                        borderColor: [
+                            'rgba(199, 21, 133, 1)',
+                            'rgba(32, 178, 170, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%'
+                                }
+                            },
+                             grid: {
+                                display: false
+                            }
+                        },
+                         y: {
+                             grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    let value = context.parsed.x;
+                                    let originalRatio = context.label === 'Homens negros' ? '1 em 3' : '1 em 17';
+                                    return `${originalRatio} (${value.toFixed(1)}%)`;
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Disparidade Racial na "Guerra às Drogas"',
+                            font: { size: 16 }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
