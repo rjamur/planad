@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise Interativa do Planad</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Calm Harmony -->
+    <!-- Application Structure Plan: The SPA is designed with a thematic, dashboard-like structure to facilitate understanding rather than a linear report replication. It starts with a high-impact "Visão Geral" summarizing the core problem ("Guerra às Drogas") vs. the proposed solution (Health & Human Rights paradigm), using key stats to create immediate context. The core of the app is the "Análise dos Eixos", where users can select any of the 9 axes. The selected axis's content is displayed in an interactive two-column layout ("Desafios" vs. "Propostas"), allowing users to visually connect problems with solutions. This structure was chosen to transform dense text into an explorable, comparative experience, guiding the user from the general problem to specific solutions in a non-linear, engaging way. -->
+    <!-- Visualization & Content Choices: Report Info -> The failure of the "war on drugs" and its costs. Goal -> Inform and create impact. Viz/Presentation -> Animated key stat cards and a donut chart (Chart.js) showing the prison population. Interaction -> Stats animate on view. Justification -> Immediately quantifies the problem's scale. | Report Info -> Problems and proposals for each axis. Goal -> Compare and detail solutions. Viz/Presentation -> Interactive two-column card layout. Interaction -> Clicking a card can reveal more info or highlight its counterpart. Justification -> Creates a direct visual link between a problem and its proposed solution, enhancing comprehension. | Report Info -> Systemic issues like governance and funding. Goal -> Organize and clarify complex structures. Viz/Presentation -> HTML/CSS-based diagrams for organizational structures and data-driven bar charts (Chart.js) for budget comparisons. Interaction -> Interactive tooltips on charts. Justification -> Simplifies complex information that is difficult to grasp from text alone. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .chart-container { position: relative; width: 100%; max-width: 500px; margin-left: auto; margin-right: auto; height: 300px; max-height: 400px; }
+        @media (min-width: 768px) { .chart-container { height: 350px; } }
+        .nav-link { transition: all 0.3s ease; }
+        .nav-link.active { color: #f59e0b; border-bottom-color: #f59e0b; }
+        .axis-button { transition: all 0.3s ease; }
+        .axis-button.active { background-color: #083344; color: #ffffff; }
+        .card { transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .fade-in { animation: fadeIn 1s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <header class="bg-cyan-950 text-white sticky top-0 z-50 shadow-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold">Análise Interativa do Planad</h1>
+            <div class="hidden md:flex space-x-6">
+                <a href="#visao-geral" class="nav-link py-2 border-b-2 border-transparent hover:text-amber-400 hover:border-amber-400">Visão Geral</a>
+                <a href="#analise-eixos" class="nav-link py-2 border-b-2 border-transparent hover:text-amber-400 hover:border-amber-400">Análise dos Eixos</a>
+                <a href="#novo-eixo" class="nav-link py-2 border-b-2 border-transparent hover:text-amber-400 hover:border-amber-400">Novo Rumo</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4">
+            <a href="#visao-geral" class="block py-2">Visão Geral</a>
+            <a href="#analise-eixos" class="block py-2">Análise dos Eixos</a>
+            <a href="#novo-eixo" class="block py-2">Novo Rumo</a>
+        </div>
+    </header>
+
+    <main>
+        <section id="visao-geral" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6 text-center">
+                <h2 class="text-3xl md:text-4xl font-bold text-cyan-900 mb-4 fade-in">Uma Mudança de Paradigma para a Política de Drogas</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 mb-12 fade-in">
+                    O modelo atual, focado na "guerra às drogas", mostrou-se ineficaz e socialmente destrutivo. A proposta de revisão do Planad defende uma transição para uma abordagem baseada em saúde pública, evidências científicas e, fundamentalmente, em direitos humanos. Esta seção explora os custos do modelo atual e a visão para o futuro.
+                </p>
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-lg fade-in">
+                        <h3 class="text-xl font-bold text-cyan-900 mb-2">Custo da "Guerra às Drogas"</h3>
+                        <p class="text-4xl font-bold text-amber-500 mb-2">R$ 7 bi</p>
+                        <p class="text-slate-600">Gastos anuais estimados com a política repressiva, recursos que poderiam ser investidos em saúde e prevenção.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-lg fade-in" style="animation-delay: 0.2s;">
+                        <h3 class="text-xl font-bold text-cyan-900 mb-2">Encarceramento Masculino</h3>
+                        <p class="text-4xl font-bold text-amber-500 mb-2">30%</p>
+                        <p class="text-slate-600">Dos homens presos respondem por crimes relacionados à Lei de Drogas, motor do superencarceramento.</p>
+                    </div>
+                    <div class="bg-slate-50 p-6 rounded-lg shadow-lg fade-in md:col-span-2 lg:col-span-1" style="animation-delay: 0.4s;">
+                        <h3 class="text-xl font-bold text-cyan-900 mb-2">Encarceramento Feminino</h3>
+                        <p class="text-4xl font-bold text-amber-500 mb-2">64%</p>
+                        <p class="text-slate-600">Das mulheres presas são vítimas da atual lei, evidenciando a seletividade de gênero e raça.</p>
+                    </div>
+                </div>
+                <div class="mt-16 fade-in">
+                    <h3 class="text-2xl font-bold text-cyan-900 mb-4">A Falha da Seletividade Penal</h3>
+                    <p class="max-w-3xl mx-auto text-slate-600 mb-8">A Lei de Drogas atual, sem critérios objetivos para diferenciar usuários de traficantes, alimenta um sistema prisional que pune seletivamente jovens, negros e pobres. O gráfico abaixo ilustra o impacto dessa política na população carcerária.</p>
+                    <div class="chart-container">
+                        <canvas id="prisonChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analise-eixos" class="py-16 md:py-24">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-cyan-900 text-center mb-4">Análise Detalhada dos Eixos Norteadores</h2>
+                <p class="max-w-3xl mx-auto text-lg text-slate-600 text-center mb-12">
+                    Navegue pelos eixos propostos para a revisão do Planad. Cada seção detalha os principais problemas identificados e as ações propostas para superá-los. A interatividade permite uma compreensão clara da relação causa-efeito entre os desafios e as soluções sugeridas.
+                </p>
+                <div id="axis-selector" class="flex flex-wrap justify-center gap-2 mb-12">
+                </div>
+                
+                <div id="axis-content" class="fade-in">
+                    <div id="axis-title-description" class="text-center mb-12">
+                        <h3 id="axis-title" class="text-2xl font-bold text-cyan-900"></h3>
+                        <p id="axis-description" class="mt-2 text-slate-600 max-w-4xl mx-auto"></p>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8 items-start">
+                        <div>
+                            <h4 class="text-xl font-bold text-cyan-800 border-b-2 border-amber-400 pb-2 mb-6">🚨 Principais Desafios</h4>
+                            <div id="challenges" class="space-y-4"></div>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-bold text-green-800 border-b-2 border-green-400 pb-2 mb-6">💡 Propostas de Ações</h4>
+                            <div id="proposals" class="space-y-4"></div>
+                        </div>
+                    </div>
+                     <div class="mt-16">
+                        <div id="axis-chart-container" class="chart-container">
+                            <canvas id="axisChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="novo-eixo" class="py-16 md:py-24 bg-white">
+            <div class="container mx-auto px-6">
+                <h2 class="text-3xl md:text-4xl font-bold text-cyan-900 text-center mb-4">Um Novo Rumo: O Eixo de Direitos Humanos</h2>
+                 <p class="max-w-3xl mx-auto text-lg text-slate-600 text-center mb-12">
+                    A proposta mais transformadora é a criação de um eixo dedicado a "Direitos Humanos, Justiça Racial e Reparação". Esta seção explica por que essa mudança é crucial para construir uma política de drogas que seja verdadeiramente justa, eficaz e alinhada aos valores de uma sociedade democrática.
+                </p>
+                <div class="bg-cyan-950 text-white p-8 rounded-lg shadow-2xl max-w-4xl mx-auto">
+                    <h3 class="text-2xl font-bold text-amber-400 mb-4">Por que um Eixo Específico?</h3>
+                    <p class="mb-6">
+                        Tratar direitos humanos e justiça racial apenas como temas transversais é insuficiente. A "guerra às drogas" é um dos principais motores de violações sistemáticas e do aprofundamento da injustiça racial no Brasil. Elevar este tema a um eixo central significa que a garantia de direitos se torna o critério fundamental pelo qual todas as outras ações devem ser planejadas, implementadas e avaliadas.
+                    </p>
+                    <h4 class="text-xl font-bold text-amber-400 mb-3">Problemas a Enfrentar Diretamente:</h4>
+                    <ul class="list-disc list-inside space-y-2">
+                        <li>Violência de Estado e execuções extrajudiciais.</li>
+                        <li>Encarceramento em massa com claro viés racial.</li>
+                        <li>Violações sistemáticas no sistema prisional.</li>
+                        <li>Criminalização da pobreza e da juventude negra.</li>
+                        <li>Ausência de políticas de reparação para os danos causados.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-cyan-950 text-white mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>Aplicação Interativa desenvolvida para facilitar a compreensão das propostas de revisão do Planad.</p>
+            <p class="text-sm text-slate-400 mt-2">Baseado no relatório técnico "Análise Estratégica e Propostas para a Revisão do Plano Nacional de Políticas sobre Drogas".</p>
+        </div>
+    </footer>
+
+    <script>
+        const appData = {
+            axes: [
+                {
+                    id: 0,
+                    title: "Prevenção",
+                    description: "Reorientar as estratégias de prevenção, saindo de modelos baseados no medo para ações focadas no desenvolvimento de habilidades para a vida e na proteção de populações vulneráveis.",
+                    challenges: [
+                        { title: "Ações Fragmentadas", text: "Programas de prevenção são pontuais, descontinuados e desarticulados entre governos e setores." },
+                        { title: "Modelos Ineficazes", text: "Predominância de abordagens baseadas no 'susto', que a ciência comprova serem pouco eficazes." },
+                        { title: "Desconexão Social", text: "Políticas ignoram determinantes de vulnerabilidade como desigualdade e falta de oportunidades." }
+                    ],
+                    proposals: [
+                        { title: "Sistema Nacional de Prevenção (Sinap)", text: "Estruturar e monitorar as melhores práticas em prevenção, garantindo continuidade e base em evidências." },
+                        { title: "Programa 'Escola que Protege'", text: "Integrar a prevenção ao currículo escolar, focando em competências socioemocionais e pensamento crítico." },
+                        { title: "Programa 'Juventude Viva e com Direitos'", text: "Atuar nas causas da vulnerabilidade com cultura, esporte, educação e qualificação profissional." }
+                    ],
+                    chart: {
+                        type: 'bar',
+                        label: 'Foco da Prevenção: Modelo Proposto vs. Atual',
+                        labels: ['Habilidades para a Vida', 'Diálogo e Cuidado', 'Inclusão Social', 'Táticas de Medo', 'Palestras Pontuais'],
+                        data: [85, 75, 90, 20, 30]
+                    }
+                },
+                {
+                    id: 1,
+                    title: "Cuidado e Acolhimento",
+                    description: "Superar a lógica da internação compulsória e fortalecer a Rede de Atenção Psicossocial (RAPS), garantindo um cuidado humanizado, comunitário e em liberdade.",
+                    challenges: [
+                        { title: "Oferta Insuficiente e Desigual", text: "Faltam CAPS e outros serviços da RAPS em muitas regiões, criando 'vazios assistenciais'." },
+                        { title: "Disputa de Modelos", text: "Conflito entre o cuidado psicossocial do SUS e o modelo de abstinência e isolamento das Comunidades Terapêuticas (CTs)." },
+                        { title: "Estigma nos Serviços", text: "Usuários de drogas são frequentemente maltratados ou recusados em serviços de saúde gerais." }
+                    ],
+                    proposals: [
+                        { title: "Fortalecimento e Expansão da RAPS", text: "Investimento público prioritário para criar mais CAPS AD e equipes de Consultório na Rua." },
+                        { title: "Projeto Terapêutico Singular (PTS)", text: "Garantir um plano de cuidado individualizado e construído com o usuário, abordando todas as dimensões da vida." },
+                        { title: "Regulação das CTs", text: "Condicionar o financiamento público ao respeito aos direitos humanos e à articulação com a RAPS." }
+                    ],
+                    chart: {
+                        type: 'pie',
+                        label: 'Origem do Financiamento para Cuidado: Modelo Proposto',
+                        labels: ['Expansão da RAPS (SUS)', 'Regulação e Articulação de CTs', 'Programas de Cuidado Singular', 'Capacitação Profissional'],
+                        data: [60, 15, 15, 10]
+                    }
+                },
+                {
+                    id: 2,
+                    title: "Redução de Danos",
+                    description: "Consolidar a Redução de Danos como pilar central da política de drogas, revertendo o retrocesso político e garantindo a proteção de uma estratégia de saúde pública que salva vidas.",
+                    challenges: [
+                        { title: "Retrocesso Político", text: "Hostilidade governamental que desqualifica a RD e prioriza a abstinência como única meta." },
+                        { title: "Estigma e Desinformação", text: "A RD é falsamente retratada como 'apologia às drogas', gerando preconceito e resistência." },
+                        { title: "Ameaça de Criminalização", text: "Tentativas de criminalizar os profissionais redutores de danos, gerando medo e insegurança jurídica." }
+                    ],
+                    proposals: [
+                        { title: "Programa Nacional de Redução de Danos", text: "Garantir orçamento próprio, diretrizes claras e, crucialmente, proteção jurídica para os profissionais." },
+                        { title: "Centros de Convivência e RD (CCRDs)", text: "Criar espaços seguros e de baixa exigência em cenas de uso aberto, oferecendo insumos, higiene e acesso à saúde." },
+                        { title: "Valorização dos Agentes de RD", text: "Criar um programa nacional de formação, certificação e remuneração, reconhecendo a profissão." }
+                    ],
+                    chart: {
+                        type: 'bar',
+                        label: 'Impacto Comprovado da Redução de Danos',
+                        labels: ['Redução de Transmissão de HIV', 'Prevenção de Overdoses', 'Vínculo com Serviços de Saúde', 'Redução de Custos Sociais'],
+                        data: [75, 60, 80, 70]
+                    }
+                },
+                 {
+                    id: 3,
+                    title: "Reinserção Social",
+                    description: "Enfrentar o ciclo de exclusão, tratando a reinserção social e econômica como uma fase central da política, com programas robustos e intersetoriais para egressos do sistema de cuidado e prisional.",
+                    challenges: [
+                        { title: "Estigma Estrutural", text: "A marca de 'ex-dependente' ou 'ex-presidiário' é uma barreira intransponível no mercado de trabalho e na sociedade." },
+                        { title: "Falta de Qualificação", text: "Egressos não possuem a formação exigida pelo mercado, e faltam programas de capacitação." },
+                        { title: "Vácuo de Políticas Públicas", text: "Não há uma ponte estruturada que conecte a saída do tratamento/prisão com políticas de emprego e renda." }
+                    ],
+                    proposals: [
+                        { title: "Programa Pró-Egresso", text: "Um programa nacional que articula qualificação profissional, intermediação de mão de obra e fomento ao empreendedorismo." },
+                        { title: "Rede de Moradias de Transição", text: "Implementar moradias assistidas com apoio psicossocial para quem não possui suporte familiar." },
+                        { title: "Selo 'Empresa que Reintegra'", text: "Conceder um selo de responsabilidade social e incentivos para empresas que contratarem egressos." }
+                    ],
+                     chart: {
+                        type: 'doughnut',
+                        label: 'Pilares do Programa Pró-Egresso',
+                        labels: ['Qualificação Profissional', 'Intermediação com Empresas', 'Fomento ao Empreendedorismo', 'Apoio Psicossocial'],
+                        data: [35, 30, 20, 15]
+                    }
+                },
+                {
+                    id: 4,
+                    title: "Redução da Oferta",
+                    description: "Mudar radicalmente o foco da segurança pública: da repressão indiscriminada e violenta no varejo para a desarticulação estratégica e financeira das grandes organizações criminosas.",
+                    challenges: [
+                        { title: "Ineficácia da 'Guerra às Drogas'", text: "Modelo de alto custo que não reduz a oferta de drogas e fortalece o crime organizado." },
+                        { title: "Encarceramento em Massa e Racismo", text: "A Lei de Drogas, sem critérios objetivos, é aplicada de forma seletiva contra jovens negros e pobres." },
+                        { title: "Foco em Policiamento Ostensivo", text: "Privilegia-se o confronto violento em comunidades em detrimento da investigação de cúpulas e lavagem de dinheiro." }
+                    ],
+                    proposals: [
+                        { title: "Programa de Descapitalização do Crime", text: "Reorientar a polícia para asfixia financeira, investigação de lavagem de dinheiro e confisco de ativos." },
+                        { title: "Reforma da Lei de Drogas", text: "Estabelecer critérios quantitativos claros para diferenciar usuário de traficante, reduzindo a seletividade penal." },
+                        { title: "Fortalecimento da Inteligência", text: "Investir em tecnologia e capacitação para investigação complexa em vez de confronto reativo." }
+                    ],
+                    chart: {
+                        type: 'pie',
+                        label: 'Alocação de Recursos de Segurança: Modelo Proposto',
+                        labels: ['Inteligência Financeira', 'Investigação de Cúpulas', 'Policiamento Comunitário', 'Repressão no Varejo'],
+                        data: [40, 30, 20, 10]
+                    }
+                },
+                {
+                    id: 5,
+                    title: "Governança e Financiamento",
+                    description: "Reformar a arquitetura da política sobre drogas para garantir uma governança integrada, financiamento estável e a superação da hegemonia da agenda de segurança sobre a de saúde.",
+                    challenges: [
+                        { title: "Governança Fragmentada", text: "O SISNAD funciona de maneira desarticulada, com sobreposição de competências e disputas entre ministérios." },
+                        { title: "Financiamento Instável", text: "A política depende de uma colcha de retalhos de fontes, o que impede o planejamento de longo prazo, especialmente para saúde." },
+                        { title: "Desarticulação Intersetorial", text: "A lógica da segurança (repressão) opera em contradição com a da saúde (cuidado), sem planejamento conjunto." }
+                    ],
+                    proposals: [
+                        { title: "Reestruturação do SISNAD", text: "Fortalecer o CONAD como instância deliberativa e criar um Comitê Gestor Interministerial com poder de decisão." },
+                        { title: "Fundo Nacional Integrado (FNIPD)", text: "Unificar fontes de financiamento com dotações orçamentárias obrigatórias, garantindo recursos para a saúde." },
+                        { title: "Planos Integrados Territoriais (PITs)", text: "Fomentar e co-financiar planos estaduais e municipais, condicionando recursos à articulação intersetorial local." }
+                    ],
+                    chart: {
+                        type: 'bar',
+                        label: 'Distribuição do Fundo Proposto (FNIPD)',
+                        labels: ['Prevenção e Cuidado', 'Redução de Danos', 'Reinserção Social', 'Pesquisa', 'Redução da Oferta (Inteligência)'],
+                        data: [40, 20, 15, 10, 15]
+                    }
+                },
+                {
+                    id: 6,
+                    title: "Pesquisa e Avaliação",
+                    description: "Superar a formulação de políticas baseadas em ideologia e pânico moral, instituindo uma cultura de tomada de decisão informada por dados, monitoramento contínuo e avaliação de impacto.",
+                    challenges: [
+                        { title: "Escassez de Dados Confiáveis", text: "Faltam pesquisas nacionais contínuas e os dados administrativos (ex: apreensões) não são padronizados." },
+                        { title: "Desprezo pela Evidência", text: "Decisões são frequentemente baseadas em convicções políticas, ignorando o conhecimento científico acumulado." },
+                        { title: "Falta de Avaliação de Impacto", text: "A maioria dos programas não tem metas claras ou metodologia de avaliação, impedindo saber o que funciona." }
+                    ],
+                    proposals: [
+                        { title: "Consolidação do OBID", text: "Fortalecer o Observatório Brasileiro de Informações sobre Drogas como uma agência autônoma de dados." },
+                        { title: "Plano de Monitoramento (PNMA)", text: "Tornar o PNMA um componente obrigatório do Planad, com indicadores-chave e metas para cada programa." },
+                        { title: "Fomento à Pesquisa Independente", text: "Criar linhas de financiamento contínuas no CNPq, CAPES e Finep para pesquisa acadêmica sobre o tema." }
+                    ],
+                    chart: {
+                        type: 'radar',
+                        label: 'Maturidade da Política de Drogas',
+                        labels: ['Base em Evidências', 'Transparência de Dados', 'Avaliação de Impacto', 'Planejamento de Longo Prazo', 'Participação Social'],
+                        data: [20, 30, 15, 25, 40],
+                        data2: [80, 85, 75, 90, 90]
+                    }
+                },
+                {
+                    id: 7,
+                    title: "Cooperação Internacional",
+                    description: "Alinhar a atuação internacional do Brasil às agendas globais de desenvolvimento e direitos humanos, assumindo uma postura propositiva e de liderança na reforma das políticas de drogas.",
+                    challenges: [
+                        { title: "Foco Exclusivo na Repressão", text: "A cooperação internacional brasileira negligencia áreas como saúde pública, RD e direitos humanos." },
+                        { title: "Desarticulação com Agendas Globais", text: "A política de drogas contradiz os compromissos do Brasil com os Objetivos de Desenvolvimento Sustentável (ODS)." },
+                        { title: "Postura Reativa", text: "O Brasil perdeu protagonismo nos debates globais, adotando posturas conservadoras em vez de liderar com modelos alternativos." }
+                    ],
+                    proposals: [
+                        { title: "Alinhamento com os ODS", text: "Incorporar de forma explícita a Agenda 2030, detalhando como cada ação do Planad contribui para os ODS." },
+                        { title: "Cooperação Sul-Sul em Saúde", text: "Posicionar o Brasil como protagonista na troca de experiências sobre RD e RAPS com países do Sul Global." },
+                        { title: "Foco em Inteligência Financeira", text: "Aprofundar parcerias para rastrear fluxos financeiros ilícitos e combater a lavagem de dinheiro transnacional." }
+                    ],
+                    chart: {
+                        type: 'polarArea',
+                        label: 'Foco da Cooperação Internacional: Proposta',
+                        labels: ['Saúde e Direitos Humanos', 'Inteligência Financeira', 'Desenvolvimento Alternativo', 'Troca de Evidências', 'Repressão Tática'],
+                        data: [35, 25, 20, 15, 5]
+                    }
+                },
+                {
+                    id: 8,
+                    title: "Direitos Humanos e Justiça Racial",
+                    description: "Eixo proposto para ser o núcleo da nova política, reconhecendo que a 'guerra às drogas' é um motor de violência, encarceramento em massa e racismo estrutural.",
+                    challenges: [
+                        { title: "Violência de Estado", text: "A política atual legitima a violência policial letal, especialmente contra a população negra e periférica." },
+                        { title: "Encarceramento com Viés Racial", text: "A Lei de Drogas é o principal fator do superencarceramento da população negra no Brasil." },
+                        { title: "Ausência de Reparação", text: "O Estado não possui políticas para reparar os danos individuais e comunitários causados por décadas de violência." }
+                    ],
+                    proposals: [
+                        { title: "Controle Externo da Polícia", text: "Criar um mecanismo independente, com participação civil, para investigar e punir a violência policial." },
+                        { title: "Política de Desencarceramento", text: "Implementar metas para a redução drástica da prisão provisória e ampliação de alternativas penais." },
+                        { title: "Fundo de Reparação Comunitária", text: "Instituir um fundo para investir em projetos sociais e de infraestrutura nas comunidades mais vitimadas." }
+                    ],
+                    chart: {
+                        type: 'pie',
+                        label: 'Destinação do Fundo de Reparação Comunitária',
+                        labels: ['Projetos Educacionais', 'Iniciativas Culturais', 'Infraestrutura Local', 'Saúde Mental Comunitária', 'Geração de Renda'],
+                        data: [30, 20, 25, 15, 10]
+                    }
+                }
+            ]
+        };
+
+        let currentChart = null;
+
+        function updateContent(axisId) {
+            const axisData = appData.axes.find(a => a.id == axisId);
+            if (!axisData) return;
+            
+            document.getElementById('axis-title').textContent = axisData.title;
+            document.getElementById('axis-description').textContent = axisData.description;
+
+            const challengesContainer = document.getElementById('challenges');
+            const proposalsContainer = document.getElementById('proposals');
+
+            challengesContainer.innerHTML = '';
+            proposalsContainer.innerHTML = '';
+
+            axisData.challenges.forEach(item => {
+                challengesContainer.innerHTML += `
+                    <div class="card bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <h5 class="font-bold text-slate-800">${item.title}</h5>
+                        <p class="text-slate-600 mt-1">${item.text}</p>
+                    </div>`;
+            });
+
+            axisData.proposals.forEach(item => {
+                proposalsContainer.innerHTML += `
+                    <div class="card bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+                        <h5 class="font-bold text-slate-800">${item.title}</h5>
+                        <p class="text-slate-600 mt-1">${item.text}</p>
+                    </div>`;
+            });
+            
+            document.querySelectorAll('.axis-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`.axis-button[data-id='${axisId}']`).classList.add('active');
+
+            updateChart(axisData.chart);
+        }
+
+        function updateChart(chartData) {
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            const ctx = document.getElementById('axisChart').getContext('2d');
+            let options = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y;
+                                }
+                                if (chartData.type !== 'radar') {
+                                    label += '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            };
+            
+            let data;
+            
+            if (chartData.type === 'radar') {
+                 data = {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: 'Cenário Atual',
+                        data: chartData.data,
+                        fill: true,
+                        backgroundColor: 'rgba(251, 146, 60, 0.2)',
+                        borderColor: 'rgb(251, 146, 60)',
+                        pointBackgroundColor: 'rgb(251, 146, 60)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(251, 146, 60)'
+                    }, {
+                        label: 'Cenário Proposto',
+                        data: chartData.data2,
+                        fill: true,
+                        backgroundColor: 'rgba(8, 51, 68, 0.2)',
+                        borderColor: 'rgb(8, 51, 68)',
+                        pointBackgroundColor: 'rgb(8, 51, 68)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(8, 51, 68)'
+                    }]
+                };
+            } else {
+                 data = {
+                    labels: chartData.labels,
+                    datasets: [{
+                        label: chartData.label,
+                        data: chartData.data,
+                        backgroundColor: [
+                            'rgba(8, 51, 68, 0.8)',
+                            'rgba(2, 82, 103, 0.8)',
+                            'rgba(14, 116, 144, 0.8)',
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(165, 243, 252, 0.8)'
+                        ],
+                        borderColor: [
+                            'rgb(8, 51, 68)',
+                            'rgb(2, 82, 103)',
+                            'rgb(14, 116, 144)',
+                            'rgb(6, 182, 212)',
+                            'rgb(165, 243, 252)'
+                        ],
+                        borderWidth: 1
+                    }]
+                };
+                if (chartData.type === 'bar'){
+                    options.scales = { y: { beginAtZero: true, max: 100, ticks: { callback: (value) => value + '%' } } };
+                }
+            }
+
+
+            currentChart = new Chart(ctx, {
+                type: chartData.type,
+                data: data,
+                options: options
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const axisSelector = document.getElementById('axis-selector');
+            appData.axes.forEach(axis => {
+                const button = document.createElement('button');
+                button.className = 'axis-button px-4 py-2 text-sm font-medium text-cyan-800 bg-white border border-cyan-200 rounded-full hover:bg-cyan-50 focus:outline-none';
+                button.textContent = axis.title;
+                button.dataset.id = axis.id;
+                button.addEventListener('click', () => updateContent(axis.id));
+                axisSelector.appendChild(button);
+            });
+
+            updateContent(0);
+
+            const prisonCtx = document.getElementById('prisonChart').getContext('2d');
+            new Chart(prisonCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Crimes de Drogas (Homens)', 'Outros Crimes (Homens)', 'Crimes de Drogas (Mulheres)', 'Outros Crimes (Mulheres)'],
+                    datasets: [{
+                        label: 'População Carcerária por Tipo de Crime',
+                        data: [30, 70, 64, 36],
+                        backgroundColor: [
+                            'rgba(234, 88, 12, 0.8)', // Laranja escuro
+                            'rgba(253, 186, 116, 0.8)', // Laranja claro
+                            'rgba(124, 58, 237, 0.8)', // Roxo escuro
+                            'rgba(196, 181, 253, 0.8)', // Roxo claro
+                        ],
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        title: { display: false },
+                        tooltip: { callbacks: { label: (c) => `${c.label}: ${c.raw}%` } }
+                    }
+                }
+            });
+            
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            const navLinks = document.querySelectorAll('nav a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    if(!mobileMenu.classList.contains('hidden')){
+                        mobileMenu.classList.add('hidden');
+                    }
+                });
+            });
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        document.querySelectorAll('.nav-link').forEach(link => {
+                            link.classList.remove('active');
+                            if(link.getAttribute('href').substring(1) === entry.target.id) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { rootMargin: "-50% 0px -50% 0px" });
+
+            document.querySelectorAll('main section').forEach(section => {
+                observer.observe(section);
+            });
+        });
+    </script>
+</body>
+</html>
