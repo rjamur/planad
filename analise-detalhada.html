@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análise Interativa do Planad</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-X9K8SRY014"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-X9K8SRY014');
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -397,17 +408,14 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                if (label) {
-                                    label += ': ';
+                                // Handle Radar chart separately (no percentage).
+                                if (context.chart.config.type === 'radar') {
+                                    return `${context.dataset.label}: ${context.parsed.r}`;
                                 }
-                                if (context.parsed.y !== null) {
-                                    label += context.parsed.y;
-                                }
-                                if (chartData.type !== 'radar') {
-                                    label += '%';
-                                }
-                                return label;
+
+                                // Use `context.label` and `context.raw` for other charts.
+                                // This is robust and works for bar, pie, doughnut, etc.
+                                return `${context.label}: ${context.raw}%`;
                             }
                         }
                     }

@@ -55,11 +55,15 @@
                 height: 350px;
             }
         }
+        .card-flip {
+            cursor: pointer;
+        }
         .card-flip-inner {
             transition: transform 0.6s;
             transform-style: preserve-3d;
         }
-        .card-flip:hover .card-flip-inner {
+        /* A classe .is-flipped é adicionada via JS no clique para acessibilidade em mobile */
+        .card-flip.is-flipped .card-flip-inner {
             transform: rotateY(180deg);
         }
         .card-front, .card-back {
@@ -89,7 +93,7 @@
 
             <div class="bg-white p-6 rounded-lg shadow-md border border-gray-200">
                 <h3 class="text-2xl font-bold text-center mb-6">Mito vs. Fato: Desconstruindo Ideias</h3>
-                <p class="text-center text-gray-600 mb-8">Passe o mouse sobre os cartões para revelar as evidências científicas que contradizem o senso comum.</p>
+                <p class="text-center text-gray-600 mb-8">Clique nos cartões para revelar as evidências científicas que contradizem o senso comum.</p>
                 <div class="grid md:grid-cols-2 gap-6">
 
                     <div class="card-flip perspective-[1000px] h-64">
@@ -310,6 +314,14 @@
 
             renderTabContent('saude');
 
+            // Lógica para os cards "Mito vs. Fato" serem clicáveis
+            const flipCards = document.querySelectorAll('.card-flip');
+            flipCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('is-flipped');
+                });
+            });
+
             const ctx = document.getElementById('incarcerationChart').getContext('2d');
             new Chart(ctx, {
                 type: 'bar',
@@ -318,6 +330,8 @@
                     datasets: [{
                         label: 'Chance de prisão durante a vida (EUA)',
                         data: [(1/3)*100, (1/17)*100],
+                        // Adicionando os dados de proporção diretamente ao dataset para um código mais limpo.
+                        ratios: ['1 em 3', '1 em 17'],
                         backgroundColor: [
                             'rgba(199, 21, 133, 0.6)',
                             'rgba(32, 178, 170, 0.6)'
@@ -358,12 +372,10 @@
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    let value = context.parsed.x;
-                                    let originalRatio = context.label === 'Homens negros' ? '1 em 3' : '1 em 17';
+                                    // Acessa a proporção original do array customizado no dataset.
+                                    // Isso evita a lógica condicional hardcoded e torna o código mais robusto.
+                                    const originalRatio = context.dataset.ratios[context.dataIndex];
+                                    const value = context.parsed.x;
                                     return `${originalRatio} (${value.toFixed(1)}%)`;
                                 }
                             }
